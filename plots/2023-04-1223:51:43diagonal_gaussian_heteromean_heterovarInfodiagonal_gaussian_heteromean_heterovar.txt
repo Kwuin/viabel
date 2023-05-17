@@ -1,0 +1,6 @@
+mean[1 2 3 4 5]  stdev[1 2 3 4 5]   lr0.5   iteration  30000paramter histories
+[ 1.02317707  2.00575507  2.97666821  3.80820648  4.74723856 -0.09180769
+  0.58229502  1.04585761  1.33072277  1.52526811]
+[ 0.97906001  1.99625321  3.06267734  3.95994811  5.02253569 -0.08657043
+  0.60503702  1.01065275  1.33672635  1.50936403]
+average time cost[0.389 1.059]average mean error[0.001 0.   ]average scale error[0.006 3.845]average iteration time [array([400, 400])]average varaince reduction-1.347

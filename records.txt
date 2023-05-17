@@ -1,0 +1,70 @@
+variace ofgrad_history_lr=5e-2_RGE01-03-202311:08:25variace ofgrad_history_lr=5e-2_RGE01-03-202311:08:49
+[0.7270199  1.39578633 1.20572991 2.59489713]
+variace ofgrad_history_lr=5e-2_RGE01-03-202311:10:24
+[0.7270199  1.39578633 1.20572991 2.59489713]
+
+variace ofgrad_history_lr=5e-2_ExclusiveKL01-03-202311:12:07
+[0.90116956 1.72082768 1.44013184 2.90873938]
+
+variace of grad_history_lr=5e-2_ExclusiveKL01-03-202311:12:26
+[0.90319082 1.72862875 1.44782079 2.94054975]
+
+variace ofgrad_history_lr=5e-2_RGE01-03-202314:57:46
+[0.7270199  1.39578633 1.20572991 2.59489713]
+
+variace ofgrad_history_lr=5e-2_RGE23-03-202301:22:57
+[0.75912926 1.538599   1.35356933 2.99081174]
+variace ofgrad_history_lr=5e-2_RGE23-03-202310:53:11
+[0.90624746 1.74104898 1.45985541 2.94934543]
+variace ofgrad_history_lr=5e-2_RGE23-03-202310:54:26
+[0.90626888 1.72990606 1.44869658 2.92997278]
+
+
+
+
+
+                            KL       RGE
+time cost                 (2.002, 7.863)
+variance reduction rate   23.46
+optimal parameter error (4.109114900993871, 4.082914682122521)
+ results of 2 dimension diagonal Gaussian  lr=0.05 iter=3000023-03-202311:18:21
+
+                             KL       RGE 
+2dimensional diagonal Gaussian
+time cost                 (2.044, 11.337)
+variance reduction rate   -26.708
+optimal parameter error   (4.117, 4.097)
+
+
+results of 2 dimension diagonal Gaussian  lr=0.05 iter=30000  23-03-202311:22:45
+
+                             KL       RGE 
+2  dimensional diagonal Gaussian
+time cost                 (2.031, 8.089)
+variance reduction rate   23.791
+optimal parameter error   (4.11, 4.082)
+variace ofgrad_history_lr=5e-2_RGE23-03-202311:32:06
+[nan nan nan nan]
+variace ofgrad_history_lr=5e-2_RGE23-03-202311:47:56
+[nan nan nan nan]
+ results of 2 dimension diagonal Gaussian  lr=0.05 iter=3000023-03-202312:38:00
+
+                             KL       RGE 
+2  dimensional diagonal Gaussian
+time cost                 (2.169, 8.34)
+variance reduction rate   7.077
+optimal parameter error   (4.11, 4.115)
+ results of 2 dimension diagonal Gaussian  lr=0.05 iter=3000023-03-202312:39:04
+
+                             KL       RGE 
+2  dimensional diagonal Gaussian
+time cost                 (2.436, 10.748)
+variance reduction rate   18.092
+optimal parameter error   (4.122, 4.117)
+ results of 2 dimension diagonal Gaussian  lr=0.05 iter=3000029-03-202315:13:08
+
+                             KL       RGE 
+2  dimensional diagonal Gaussian
+time cost                 (0.459, 1.206)
+variance reduction rate   nan
+optimal parameter error   (1.955, 2.0)

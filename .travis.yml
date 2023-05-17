@@ -1,0 +1,20 @@
+language: python
+python:
+  - 3.6
+  - 3.7
+
+notifications:
+  email:
+    recipients:
+      - huggins@bu.edu
+    on_success: never # default: change
+    on_failure: always # default: always
+
+install:
+  - pip install -U importlib_metadata  # see https://travis-ci.community/t/build-error-for-python-3-7-on-two-different-projects/12895
+  - pip install .[dev]
+
+script:
+  - coverage run --include='viabel/[A-Za-z]*.py' -m pytest
+  - coverage report -m  # Generate test coverage report.
+  - codecov  # Upload the report to codecov.

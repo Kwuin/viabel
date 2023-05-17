@@ -1,0 +1,30 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# pickles
+*.pkl
+*.pck
+
+# C extensions
+*.so
+
+# Distribution / packaging
+*.egg-info
+.coverage
+htmlcov/
+dist/
+
+# generated docs
+build/
+viabel.*.rst
+
+# ipython junk
+.ipynb_checkpoints
+
+# Mac OS junk
+.DS_Store
+
+# python virtual environments
+*-env/
+venv/
