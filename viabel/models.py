@@ -1,10 +1,18 @@
-from autograd.extend import defvjp, primitive
 
-from ._utils import ensure_2d, vectorize_if_needed
+
+from ._utils import ensure_2d, vectorize_if_needed, vectorize_bs_if_needed
+
+from autograd.extend import primitive, defvjp
+import autograd.numpy as np
+
+
+
+from autograd.numpy import numpy_boxes
 
 __all__ = [
     'Model',
-    'StanModel'
+    'StanModel',
+    'BridgeStanModel'
 ]
 
 
@@ -88,6 +96,19 @@ def _make_stan_log_density(fitobj):
     return log_density
 
 
+def _make_bridgestan_log_density(model):
+    @primitive
+    def log_density(x):
+        return vectorize_if_needed(model.log_density, x)
+
+    def log_density_vjp(ans, x):
+        return lambda g: vectorize_bs_if_needed(model.log_density_gradient, x)
+
+        
+    defvjp(log_density, log_density_vjp)
+    return log_density
+
+    
 class StanModel(Model):
     """Class that encapsulates a PyStan model."""
 
@@ -102,3 +123,39 @@ class StanModel(Model):
 
     def constrain(self, model_param):
         return self._fit.constrain_pars(model_param)
+
+
+class BridgeStanModel(Model):
+
+    def __init__(self, BridgeStanModelObject):
+        super().__init__(_make_bridgestan_log_density(BridgeStanModelObject))
+        self.BridgeStanModelObject = BridgeStanModelObject
+
+    def constrain(self, model_param):
+        return self.BridgeStanModelObject.param_constrain(model_param)
+
+    def vectorized_gradient(self, param):
+        param = np.atleast_2d(param)
+        output = np.zeros_like(param)
+        for i in range(param.shape[0]):
+             a = self.BridgeStanModelObject.log_density_gradient(param[i, :])[1]
+             output[i, :] = a
+        return output
+        
+    
+    def gradient(self,param):
+        return self.BridgeStanModelObject.log_density_gradient(param)[1]
+        
+    
+    def hessian(self, param):
+
+        return self.BridgeStanModelObject.log_density_hessian(param)[2]
+
+    def num_params(self):
+        return self.BridgeStanModelObject.param_num()
+    
+    def value_and_grad(self, param):
+        return self.BridgeStanModelObject.log_density_gradient(param)
+        
+    
+
