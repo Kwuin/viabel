@@ -3,9 +3,9 @@ from abc import ABC, abstractmethod
 import autograd.numpy as np
 import tqdm
 
-from viabel._mc_diagnostics import MCSE, R_hat_convergence_check
-from viabel._utils import Timer, StanModel_cache
-from viabel.approximations import MFGaussian
+from ._mc_diagnostics import MCSE, R_hat_convergence_check
+from ._utils import Timer, StanModel_cache
+from .approximations import MFGaussian
 from collections import defaultdict
 
 __all__ = [

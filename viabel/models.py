@@ -1,6 +1,6 @@
 
 
-from ._utils import ensure_2d, vectorize_if_needed, vectorize_bs_if_needed
+from ._utils import ensure_2d, vectorize_if_needed
 
 from autograd.extend import primitive, defvjp
 import autograd.numpy as np
