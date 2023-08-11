@@ -133,6 +133,9 @@ class BridgeStanModel(Model):
 
     def constrain(self, model_param):
         return self.BridgeStanModelObject.param_constrain(model_param)
+    
+    def unconstrain(self, model_param):
+         return self.BridgeStanModelObject.param_unconstrain(model_param)
 
     def vectorized_gradient(self, param):
         param = np.atleast_2d(param)
