@@ -150,31 +150,29 @@ class ExclusiveKL(StochasticVariationalObjective):
     def _update_objective_and_grad(self):
         approx = self.approx
 
-# =============================================================================
-#         if self.hessian_approx_method is None:
-#             def variational_objective(var_param):
-#                 samples = approx.sample(var_param, self.num_mc_samples)
-#                 if self._use_path_deriv:
-#                     var_param_stopped = getval(var_param)
-#                     lower_bound = np.mean(
-#                         self.model(samples) - approx.log_density(var_param_stopped, samples))
-#                 elif approx.supports_entropy:
-#                     lower_bound = np.mean(self.model(samples)) + approx.entropy(var_param)
-#                 else:
-#                     lower_bound = np.mean(self.model(samples) - approx.log_density(samples))
-#                 return -lower_bound
-# 
-#             #self._hvp = make_hvp(variational_objective)
-#             def value_and_gradient(var_param):
-#                 samples = approx.sample(var_param, self.num_mc_samples)
-#                
-#                 dim = int(0.5 *np.shape(var_param)[0])
-#                 return variational_objective(var_param), np.exp(var_param[dim:] -self.model.gradient(samples) )
-#             self._objective_and_grad = value_and_gradient
-#             
-#             return
-# 
-# =============================================================================
+        if self.hessian_approx_method is None:
+            def variational_objective(var_param):
+                samples = approx.sample(var_param, self.num_mc_samples)
+                if self._use_path_deriv:
+                    var_param_stopped = getval(var_param)
+                    lower_bound = np.mean(
+                        self.model(samples) - approx.log_density(var_param_stopped, samples))
+                elif approx.supports_entropy:
+                    lower_bound = np.mean(self.model(samples)) + approx.entropy(var_param)
+                else:
+                    lower_bound = np.mean(self.model(samples) - approx.log_density(samples))
+                return -lower_bound
+
+            #self._hvp = make_hvp(variational_objective)
+            def value_and_gradient(var_param):
+                samples = approx.sample(var_param, self.num_mc_samples)
+               
+                dim = int(0.5 *np.shape(var_param)[0])
+                return variational_objective(var_param), np.exp(var_param[dim:] -self.model.gradient(samples) )
+            self._objective_and_grad = value_and_gradient
+            
+            return
+
         def RGE(var_param):
             z_samples = approx.sample(var_param, self.num_mc_samples)
             m_mean, cov = approx.mean_and_cov(var_param)
@@ -199,14 +197,13 @@ class ExclusiveKL(StochasticVariationalObjective):
                 return self._model(x)
 
             # estimate grad and hessian
-# =============================================================================
-#             grad_f = elementwise_grad(self.model)
-#             grad_f_single = grad(f_model)
-#             dLdm = grad_f(z_samples)
-# =============================================================================
+
+            grad_f = elementwise_grad(self.model)
+            grad_f_single = grad(f_model)
+            dLdm = grad_f(z_samples)
+
             # log-std
             # dLds = dLdm * epsilon_sample + 1 / s_scale
-            dLdm = self.model.vectorized_gradient(z_samples)
             dLdlns = dLdm * epsilon_sample * s_scale + 1
             # var_param MC gradient
             g_hat_rprm_grad = np.column_stack([dLdm, dLdlns])
@@ -220,7 +217,7 @@ class ExclusiveKL(StochasticVariationalObjective):
                 
                 # Miller's implementation
                 #gmu = grad_f(m_mean)
-                gmu = self.model.gradient(m_mean)
+                gmu = grad_f_single(m_mean)
                 H = self.model.hessian(m_mean)
                 Hdiag = np.diag(H)
                 # construct normal approx samples of data term

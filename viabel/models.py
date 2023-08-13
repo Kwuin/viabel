@@ -85,15 +85,15 @@ class Model(object):
         raise NotImplementedError()
 
 
-def _make_stan_log_density(fitobj):
-    @primitive
-    def log_density(x):
-        return vectorize_if_needed(fitobj.log_prob, x)
+# def _make_stan_log_density(fitobj):
+#     @primitive
+#     def log_density(x):
+#         return vectorize_if_needed(fitobj.log_prob, x)
 
-    def log_density_vjp(ans, x):
-        return lambda g: ensure_2d(g) * vectorize_if_needed(fitobj.grad_log_prob, x)
-    defvjp(log_density, log_density_vjp)
-    return log_density
+#     def log_density_vjp(ans, x):
+#         return lambda g: ensure_2d(g) * vectorize_if_needed(fitobj.grad_log_prob, x)
+#     defvjp(log_density, log_density_vjp)
+#     return log_density
 
 
 def _make_bridgestan_log_density(model):
@@ -106,9 +106,26 @@ def _make_bridgestan_log_density(model):
 
         
     defvjp(log_density, log_density_vjp)
+    return log_densit
+
+
+
+def _make_stan_log_density(fitobj):
+    @primitive
+    def log_density(x):
+        return vectorize_if_needed(fitobj.log_density, x)
+
+    def log_gradient(x):
+        _, gradient = fitobj.log_density_gradient(x)
+        return gradient
+    
+    def log_density_vjp(ans, x):
+        return lambda g: ensure_2d(g) * vectorize_if_needed(log_gradient, x)
+    defvjp(log_density, log_density_vjp)
     return log_density
 
-    
+
+
 class StanModel(Model):
     """Class that encapsulates a PyStan model."""
 
