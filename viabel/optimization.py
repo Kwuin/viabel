@@ -536,7 +536,9 @@ class FASO(Optimizer):
                 for k in progress:
                     # take step in descent direction
                     with Timer() as opt_timer:
+                        print(variational_param)
                         object_val, object_grad = objective(variational_param)
+                        print(object_grad)
                         history['value_history'].append(object_val)
                         history['grad_history'].append(object_grad)
                         descent_dir = self._sgo.descent_direction(object_grad)

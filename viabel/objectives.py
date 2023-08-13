@@ -183,6 +183,8 @@ class ExclusiveKL(StochasticVariationalObjective):
             # elbo = np.mean(self._model(z_samples) - approx.log_density(var_param, z_samples))
             if self._use_path_deriv:
                 var_param_stopped = getval(var_param)
+                print('z_samples')
+                print(z_samples)
                 lower_bound = np.mean(
                     self.model(z_samples) - approx.log_density(var_param_stopped, z_samples))
             elif approx.supports_entropy:
