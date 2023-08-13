@@ -186,6 +186,7 @@ class ExclusiveKL(StochasticVariationalObjective):
                 lower_bound = np.mean(
                     self.model(z_samples) - approx.log_density(var_param_stopped, z_samples))
             elif approx.supports_entropy:
+    
                 lower_bound = np.mean(self.model(z_samples)) + approx.entropy(var_param)
             else:
                 lower_bound = np.mean(self.model(z_samples) - approx.log_density(z_samples))
@@ -203,7 +204,7 @@ class ExclusiveKL(StochasticVariationalObjective):
 # =============================================================================
             # log-std
             # dLds = dLdm * epsilon_sample + 1 / s_scale
-            dLdm = self.model.vectorized_gradient(epsilon_sample)
+            dLdm = self.model.vectorized_gradient(z_samples)
             dLdlns = dLdm * epsilon_sample * s_scale + 1
             # var_param MC gradient
             g_hat_rprm_grad = np.column_stack([dLdm, dLdlns])
