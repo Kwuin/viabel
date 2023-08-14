@@ -94,19 +94,21 @@ class Model(object):
 #         return lambda g: ensure_2d(g) * vectorize_if_needed(fitobj.grad_log_prob, x)
 #     defvjp(log_density, log_density_vjp)
 #     return log_density
-
-
-def _make_bridgestan_log_density(model):
-    @primitive
-    def log_density(x):
-        return vectorize_if_needed(model.log_density, x)
-
-    def log_density_vjp(ans, x):
-        return lambda g: vectorize_bs_if_needed(model.log_density_gradient, x)
-
-        
-    defvjp(log_density, log_density_vjp)
-    return log_densit
+# =============================================================================
+# 
+# 
+# def _make_bridgestan_log_density(model):
+#     @primitive
+#     def log_density(x):
+#         return vectorize_if_needed(model.log_density, x)
+# 
+#     def log_density_vjp(ans, x):
+#         return lambda g: vectorize_bs_if_needed(model.log_density_gradient, x)
+# 
+#         
+#     defvjp(log_density, log_density_vjp)
+#     return log_density
+# =============================================================================
 
 
 
@@ -139,7 +141,7 @@ class StanModel(Model):
         super().__init__(_make_stan_log_density(fit))
 
     def constrain(self, model_param):
-        return self._fit.constrain_pars(model_param)
+        return self._fit.param_constrain(model_param)
 
 
 class BridgeStanModel(Model):

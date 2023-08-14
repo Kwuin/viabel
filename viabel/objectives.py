@@ -162,14 +162,16 @@ class ExclusiveKL(StochasticVariationalObjective):
                 else:
                     lower_bound = np.mean(self.model(samples) - approx.log_density(samples))
                 return -lower_bound
-
+            self._objective_and_grad = value_and_grad(variational_objective)
             #self._hvp = make_hvp(variational_objective)
-            def value_and_gradient(var_param):
-                samples = approx.sample(var_param, self.num_mc_samples)
-               
-                dim = int(0.5 *np.shape(var_param)[0])
-                return variational_objective(var_param), np.exp(var_param[dim:] -self.model.gradient(samples) )
-            self._objective_and_grad = value_and_gradient
+# =============================================================================
+#             def value_and_gradient(var_param):
+#                 samples = approx.sample(var_param, self.num_mc_samples)
+#                
+#                 dim = int(0.5 *np.shape(var_param)[0])
+#                 return variational_objective(var_param), np.exp(var_param[dim:] -self.model.gradient(samples) )
+#             self._objective_and_grad = value_and_gradient
+# =============================================================================
             
             return
 
