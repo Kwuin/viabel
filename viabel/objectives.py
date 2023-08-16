@@ -210,11 +210,11 @@ class ExclusiveKL(StochasticVariationalObjective):
             # var_param MC gradient
             g_hat_rprm_grad = np.column_stack([dLdm, dLdlns])
             # These implementation of using reparameterization and control variate to reduce variation
-            if self.hessian_approx_method is None:
-                elbo_gsamps_cv = g_hat_rprm_grad
-                g_hat_rv = np.mean(elbo_gsamps_cv, axis=0)
+            # if self.hessian_approx_method is None:
+            #     elbo_gsamps_cv = g_hat_rprm_grad
+            #     g_hat_rv = np.mean(elbo_gsamps_cv, axis=0)
                 
-            elif self.hessian_approx_method == "full":
+            if self.hessian_approx_method == "full":
                 # hessian_f = hessian(f_model)
                 
                 # Miller's implementation
