@@ -11,8 +11,8 @@ from autograd.numpy import numpy_boxes
 
 __all__ = [
     'Model',
-    'StanModel',
-    'BridgeStanModel'
+    'StanModel'
+    #'BridgeStanModel'
 ]
 
 
@@ -144,40 +144,40 @@ class StanModel(Model):
         return self._fit.param_constrain(model_param)
 
 
-class BridgeStanModel(Model):
+# class BridgeStanModel(Model):
 
-    def __init__(self, BridgeStanModelObject):
-        super().__init__(_make_bridgestan_log_density(BridgeStanModelObject))
-        self.BridgeStanModelObject = BridgeStanModelObject
+#     def __init__(self, BridgeStanModelObject):
+#         super().__init__(_make_bridgestan_log_density(BridgeStanModelObject))
+#         self.BridgeStanModelObject = BridgeStanModelObject
 
-    def constrain(self, model_param):
-        return self.BridgeStanModelObject.param_constrain(model_param)
+#     def constrain(self, model_param):
+#         return self.BridgeStanModelObject.param_constrain(model_param)
     
-    def unconstrain(self, model_param):
-         return self.BridgeStanModelObject.param_unconstrain(model_param)
+#     def unconstrain(self, model_param):
+#          return self.BridgeStanModelObject.param_unconstrain(model_param)
 
-    def vectorized_gradient(self, param):
-        param = np.atleast_2d(param)
-        output = np.zeros_like(param)
-        for i in range(param.shape[0]):
-             a = self.BridgeStanModelObject.log_density_gradient(param[i, :])[1]
-             output[i, :] = a
-        return output
+#     def vectorized_gradient(self, param):
+#         param = np.atleast_2d(param)
+#         output = np.zeros_like(param)
+#         for i in range(param.shape[0]):
+#              a = self.BridgeStanModelObject.log_density_gradient(param[i, :])[1]
+#              output[i, :] = a
+#         return output
         
     
-    def gradient(self,param):
-        return self.BridgeStanModelObject.log_density_gradient(param)[1]
+#     def gradient(self,param):
+#         return self.BridgeStanModelObject.log_density_gradient(param)[1]
         
     
-    def hessian(self, param):
+#     def hessian(self, param):
 
-        return self.BridgeStanModelObject.log_density_hessian(param)[2]
+#         return self.BridgeStanModelObject.log_density_hessian(param)[2]
 
-    def num_params(self):
-        return self.BridgeStanModelObject.param_num()
+#     def num_params(self):
+#         return self.BridgeStanModelObject.param_num()
     
-    def value_and_grad(self, param):
-        return self.BridgeStanModelObject.log_density_gradient(param)
+#     def value_and_grad(self, param):
+#         return self.BridgeStanModelObject.log_density_gradient(param)
         
     
 
