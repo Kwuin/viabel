@@ -77,7 +77,7 @@ def bbvi(dimension, *, n_iters=10000, num_mc_samples=10, log_density=None,
             raise ValueError('log_density and fit cannot both be specified')
         if approx is None:
             approx = MFGaussian(dimension)
-        objective = ExclusiveKL(approx, model, num_mc_samples)
+        objective = ExclusiveKL(approx, model, num_mc_samples, hessian_approx_method = 'full')
     if init_var_param is None:
         init_var_param = approx.init_param()
     base_opt = RMSProp(learning_rate, diagnostics=True, **RMS_kwargs)

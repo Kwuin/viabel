@@ -151,7 +151,6 @@ class ExclusiveKL(StochasticVariationalObjective):
         approx = self.approx
 
         if self.hessian_approx_method is None:
-            print("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu")
             def variational_objective(var_param):
                 samples = approx.sample(var_param, self.num_mc_samples)
                 if self._use_path_deriv:
@@ -163,7 +162,6 @@ class ExclusiveKL(StochasticVariationalObjective):
                 else:
                     lower_bound = np.mean(self.model(samples) - approx.log_density(samples))
                 return -lower_bound
-            print("reutuuuuuuuuuuuuuuu")
             self._objective_and_grad = value_and_grad(variational_objective)
             #self._hvp = make_hvp(variational_objective)
 # =============================================================================

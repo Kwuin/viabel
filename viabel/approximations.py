@@ -200,6 +200,7 @@ class MFGaussian(ApproximationFamily):
         dim : `int`
             dimension of the underlying parameter space
         """
+       
         self._rs = npr.RandomState(seed)
         self._pattern = _get_mu_log_sigma_pattern(dim)
         super().__init__(dim, self._pattern.flat_length(True), True, True)
@@ -212,6 +213,13 @@ class MFGaussian(ApproximationFamily):
     def sample(self, var_param, n_samples, seed=None):
         my_rs = self._rs if seed is None else npr.RandomState(seed)
         param_dict = self._pattern.fold(var_param)
+        
+        samples =  param_dict['mu'] + np.exp(param_dict['log_sigma']) * \
+            my_rs.randn(n_samples, self.dim)
+        
+        
+        #print(np.mean(samples, axis=0))
+        #print(np.log(np.std(samples, axis=0)))
         return param_dict['mu'] + np.exp(param_dict['log_sigma']) * \
             my_rs.randn(n_samples, self.dim)
 

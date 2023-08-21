@@ -142,6 +142,10 @@ class StanModel(Model):
 
     def constrain(self, model_param):
         return self._fit.param_constrain(model_param)
+    
+    
+    def hessian(self, param):
+        return self._fit.log_density_hessian(param)[2]
 
 
 # class BridgeStanModel(Model):
