@@ -151,6 +151,7 @@ class ExclusiveKL(StochasticVariationalObjective):
         approx = self.approx
 
         if self.hessian_approx_method is None:
+            print("nnnnnnnnnnnnnnnn")
             def variational_objective(var_param):
                 samples = approx.sample(var_param, self.num_mc_samples)
                 if self._use_path_deriv:
@@ -183,8 +184,6 @@ class ExclusiveKL(StochasticVariationalObjective):
             # elbo = np.mean(self._model(z_samples) - approx.log_density(var_param, z_samples))
             if self._use_path_deriv:
                 var_param_stopped = getval(var_param)
-                print('z_samples')
-                print(z_samples)
                 lower_bound = np.mean(
                     self.model(z_samples) - approx.log_density(var_param_stopped, z_samples))
             elif approx.supports_entropy:
@@ -216,7 +215,7 @@ class ExclusiveKL(StochasticVariationalObjective):
                 
             if self.hessian_approx_method == "full":
                 # hessian_f = hessian(f_model)
-                
+                print("nnnnnnnnnnnnnn")
                 # Miller's implementation
                 #gmu = grad_f(m_mean)
                 gmu = grad_f_single(m_mean)
