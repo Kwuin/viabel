@@ -192,7 +192,9 @@ class RMSProp(StochasticGradientOptimizer):
             avg_grad_sq = self._avg_grad_sq
         avg_grad_sq *= self._beta
         avg_grad_sq += (1. - self._beta) * grad**2
+        
         descent_dir = grad / np.sqrt(self._jitter + avg_grad_sq)
+       
         self._avg_grad_sq = avg_grad_sq
         return descent_dir
 
@@ -536,15 +538,17 @@ class FASO(Optimizer):
                 for k in progress:
                     # take step in descent direction
                     with Timer() as opt_timer:
-                        #print(variational_param)
+                       
                         object_val, object_grad = objective(variational_param)
                         #print(object_val)
+                        
                         history['value_history'].append(object_val)
                         history['grad_history'].append(object_grad)
                         descent_dir = self._sgo.descent_direction(object_grad)
-                        
+                      
                         variational_param = objective.update(variational_param, learning_rate * descent_dir)
                         history['variational_param_history'].append(variational_param.copy())
+                        
                         if diagnostics:
                             history['descent_dir_history'].append(descent_dir)
                     total_opt_time += opt_timer.interval

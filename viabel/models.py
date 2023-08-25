@@ -44,6 +44,7 @@ class Model(object):
         -------
         log_density : `float`
         """
+       
         return self._log_density(model_param)
 
     def constrain(self, model_param):
@@ -115,6 +116,7 @@ class Model(object):
 def _make_stan_log_density(fitobj):
     @primitive
     def log_density(x):
+       
         return vectorize_if_needed(fitobj.log_density, x)
 
     def log_gradient(x):
