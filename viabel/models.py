@@ -140,6 +140,7 @@ class StanModel(Model):
         fit : `StanFit4model` object
         """
         self._fit = fit
+        
         super().__init__(_make_stan_log_density(fit))
 
     def constrain(self, model_param):

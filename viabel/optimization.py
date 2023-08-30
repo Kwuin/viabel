@@ -547,6 +547,7 @@ class FASO(Optimizer):
                         descent_dir = self._sgo.descent_direction(object_grad)
                       
                         variational_param = objective.update(variational_param, learning_rate * descent_dir)
+                        
                         history['variational_param_history'].append(variational_param.copy())
                         
                         if diagnostics:
