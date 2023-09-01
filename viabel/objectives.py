@@ -176,7 +176,6 @@ class ExclusiveKL(StochasticVariationalObjective):
 # =============================================================================
         else:   
             def RGE(var_param):
-                print("RGE")
                 z_samples = approx.sample(var_param, self.num_mc_samples)
                 m_mean, cov = approx.mean_and_cov(var_param)
                 s_scale = np.sqrt(np.diag(cov))
