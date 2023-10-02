@@ -1,9 +1,9 @@
-from ._psis import psislw
-from .approximations import MFGaussian
-from .diagnostics import all_diagnostics
-from .models import Model, StanModel
-from .objectives import ExclusiveKL
-from .optimization import RAABBVI, FASO, RMSProp
+from viabel._psis import psislw
+from viabel.approximations import MFGaussian
+from viabel.diagnostics import all_diagnostics
+from viabel.models import Model, StanModel
+from viabel.objectives import ExclusiveKL
+from viabel.optimization import RAABBVI, FASO, RMSProp
 
 all = [
     'bbvi',

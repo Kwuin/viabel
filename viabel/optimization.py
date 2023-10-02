@@ -3,9 +3,9 @@ from abc import ABC, abstractmethod
 import autograd.numpy as np
 import tqdm
 
-from ._mc_diagnostics import MCSE, R_hat_convergence_check
-from ._utils import Timer, StanModel_cache
-from .approximations import MFGaussian
+from viabel._mc_diagnostics import MCSE, R_hat_convergence_check
+from viabel._utils import Timer, StanModel_cache
+from viabel.approximations import MFGaussian
 from collections import defaultdict
 
 __all__ = [
@@ -192,9 +192,7 @@ class RMSProp(StochasticGradientOptimizer):
             avg_grad_sq = self._avg_grad_sq
         avg_grad_sq *= self._beta
         avg_grad_sq += (1. - self._beta) * grad**2
-        
         descent_dir = grad / np.sqrt(self._jitter + avg_grad_sq)
-       
         self._avg_grad_sq = avg_grad_sq
         return descent_dir
 
@@ -537,19 +535,13 @@ class FASO(Optimizer):
             try:
                 for k in progress:
                     # take step in descent direction
-                    with Timer() as opt_timer:
-                       
+                    with Timer() as opt_timer:               
                         object_val, object_grad = objective(variational_param)
-                        #print(object_val)
-                        
                         history['value_history'].append(object_val)
                         history['grad_history'].append(object_grad)
                         descent_dir = self._sgo.descent_direction(object_grad)
-                      
                         variational_param = objective.update(variational_param, learning_rate * descent_dir)
-                        
                         history['variational_param_history'].append(variational_param.copy())
-                        
                         if diagnostics:
                             history['descent_dir_history'].append(descent_dir)
                     total_opt_time += opt_timer.interval
@@ -574,9 +566,7 @@ class FASO(Optimizer):
                     if k_conv is not None and k - k_conv == W_check:
                         W = W_check
                         converged_iterates = np.array(history['variational_param_history'][-W:])
-                        
                         iterate_average = np.mean(converged_iterates, axis=0)
-                        
                         if diagnostics and k not in history['iterate_average_k_history']:
                             history['iterate_average_k_history'].append(k)
                             history['iterate_average_history'].append(iterate_average)
@@ -590,12 +580,9 @@ class FASO(Optimizer):
                                 iterate_diff_zero = iterate_diff == 0
                                 # ignore constant variational parameters
                                 if np.any(iterate_diff_zero):
-                                  
-                                    indices = np.argwhere(iterate_diff_zero)
-                                  
+                                    indices = np.argwhere(iterate_diff_zero) 
                                 converged_log_sdevs = converged_iterates[:, -dim:]
                                 mean_log_stdev = np.mean(converged_log_sdevs, axis=0)
-            
                                 ess, mcse = MCSE(converged_iterates)
                                 mcse_mean = mcse[:dim] / np.exp(mean_log_stdev)
                                 mcse_stdev = mcse[-dim:]
@@ -606,7 +593,6 @@ class FASO(Optimizer):
                             history['ess_and_mcse_k_history'].append(k)
                             history['ess_history'].append(ess)
                             history['mcse_history'].append(mcse)
-                            
                         if (np.max(mcse) < self._mcse_threshold and np.min(ess) > self._ESS_min):
                             k_stopped = k
                             break
