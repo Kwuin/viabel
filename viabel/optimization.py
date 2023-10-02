@@ -580,7 +580,7 @@ class FASO(Optimizer):
                                 iterate_diff_zero = iterate_diff == 0
                                 # ignore constant variational parameters
                                 if np.any(iterate_diff_zero):
-                                    indices = np.argwhere(iterate_diff_zero) 
+                                    indices = np.argwhere(iterate_diff_zero)
                                     converged_iterates = np.delete(converged_iterates, indices, 1)
                                 converged_log_sdevs = converged_iterates[:, -dim:]
                                 mean_log_stdev = np.mean(converged_log_sdevs, axis=0)
