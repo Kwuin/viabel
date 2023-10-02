@@ -199,7 +199,7 @@ class MFGaussian(ApproximationFamily):
         ----------
         dim : `int`
             dimension of the underlying parameter space
-        """ 
+        """
         self._rs = npr.RandomState(seed)
         self._pattern = _get_mu_log_sigma_pattern(dim)
         super().__init__(dim, self._pattern.flat_length(True), True, True)

@@ -89,7 +89,6 @@ def bbvi(dimension, *, n_iters=10000, num_mc_samples=10, log_density=None,
         opt = base_opt
     else:
         raise ValueError('if fixed_lr is False, adaptive must be True')
-    print(init_var_param)
     opt_results = opt.optimize(n_iters, objective, init_var_param)
     opt_results['objective'] = objective
     return opt_results

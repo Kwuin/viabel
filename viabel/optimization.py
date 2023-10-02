@@ -535,7 +535,7 @@ class FASO(Optimizer):
             try:
                 for k in progress:
                     # take step in descent direction
-                    with Timer() as opt_timer:               
+                    with Timer() as opt_timer:
                         object_val, object_grad = objective(variational_param)
                         history['value_history'].append(object_val)
                         history['grad_history'].append(object_grad)
@@ -581,6 +581,7 @@ class FASO(Optimizer):
                                 # ignore constant variational parameters
                                 if np.any(iterate_diff_zero):
                                     indices = np.argwhere(iterate_diff_zero) 
+                                    converged_iterates = np.delete(converged_iterates, indices, 1)
                                 converged_log_sdevs = converged_iterates[:, -dim:]
                                 mean_log_stdev = np.mean(converged_log_sdevs, axis=0)
                                 ess, mcse = MCSE(converged_iterates)
