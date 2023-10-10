@@ -1,5 +1,6 @@
 from _utils import ensure_2d, vectorize_if_needed
 
+from _utils import ensure_2d, vectorize_if_needed
 import jax
 import jax.numpy as jnp
 from jax import grad, jit, random
@@ -80,6 +81,7 @@ class Model(object):
         raise NotImplementedError()
 
 
+
 #
 # def _make_stan_log_density(fitobj):
 #     @primitive
@@ -129,7 +131,7 @@ class SubModel(Model):
         super().__init__(posterior_func)
 
     @staticmethod
-    def posterior(x, prior, model, dataset, subsample_size):
+    def posterior(x, prior, model,  dataset, subsample_size):
         SubModel.rng, sub_rng = random.split(SubModel.rng)
         subsample_indices = random.choice(sub_rng, dataset.shape[0], shape=[subsample_size], replace=False)
         subsample_data = dataset[subsample_indices]
@@ -137,3 +139,4 @@ class SubModel(Model):
         likelihood = (jnp.shape(dataset)[0] / subsample_size) * model(x[jnp.newaxis, :], subsample_data)
 
         return likelihood + prior(x)
+
