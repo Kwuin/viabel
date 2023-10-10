@@ -145,16 +145,19 @@ class SubsamplingModel(Model):
     def __init__(self, log_prior, log_likelihood, dataset, subsample_size, seed=42):
         self.seed = seed
         self.rng = random.PRNGKey(SubModel.seed)
+        self.log_prior = log_prior
+        self.log_likelihood = log_likelihood
+        self.dataset = dataset
+        self.subsample_size = subsample_size
 
-        def posterior_func(x):
-            return self.posterior(x, log_prior, log_likelihood, dataset, subsample_size)
-        super().__init__(posterior_func)
+        super().__init__(self.posterior)
 
-    def posterior(self, x, prior, model, dataset, subsample_size):
+    def posterior(self, x):
         self.rng, sub_rng = random.split(self.rng)
-        subsample_indices = random.choice(sub_rng, dataset.shape[0], shape=[subsample_size], replace=False)
-        subsample_data = dataset[subsample_indices]
+        subsample_indices = random.choice(sub_rng, self.dataset.shape[0], shape=[self.subsample_size], replace=False)
+        subsample_data = self.dataset[subsample_indices]
         # print(subsample_data.shape) #10,4
-        likelihood = (jnp.shape(dataset)[0] / subsample_size) * jnp.sum(model(x, subsample_data), axis=-1)
+        likelihood = (jnp.shape(self.dataset)[0] / self.subsample_size) * jnp.sum(
+            self.log_likelihood(x, subsample_data), axis=-1)
 
-        return likelihood + prior(x)
+        return likelihood + self.log_prior(x)

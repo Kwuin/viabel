@@ -77,3 +77,5 @@ def test_StanModel():
 
     x = 4 * np.random.randn(10, 2)
     _test_model(model, x, False, dict(beta=x[0]))
+
+
