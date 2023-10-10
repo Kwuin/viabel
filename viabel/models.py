@@ -1,13 +1,12 @@
+from _utils import ensure_2d, vectorize_if_needed
 
-from ._utils import ensure_2d, vectorize_if_needed
-from autograd.extend import primitive, defvjp
-import autograd.numpy as np
-
-from autograd.numpy import numpy_boxes
+import jax
+import jax.numpy as jnp
+from jax import grad, jit, random
 
 __all__ = [
     'Model',
-    'StanModel'
+    'SubModel'
 ]
 
 
@@ -39,7 +38,7 @@ class Model(object):
         -------
         log_density : `float`
         """
-       
+
         return self._log_density(model_param)
 
     def constrain(self, model_param):
@@ -81,39 +80,60 @@ class Model(object):
         raise NotImplementedError()
 
 
-def _make_stan_log_density(fitobj):
-    @primitive
-    def log_density(x):
-       
-        return vectorize_if_needed(fitobj.log_density, x)
+#
+# def _make_stan_log_density(fitobj):
+#     @primitive
+#     def log_density(x):
+#
+#         return vectorize_if_needed(fitobj.log_density, x)
+#
+#     def log_gradient(x):
+#         _, gradient = fitobj.log_density_gradient(x)
+#         return gradient
+#
+#     def log_density_vjp(ans, x):
+#         return lambda g: ensure_2d(g) * vectorize_if_needed(fitobj.grad_log_prob, x)
+#     defvjp(log_density, log_density_vjp)
+#     return log_density
 
-    def log_gradient(x):
-        _, gradient = fitobj.log_density_gradient(x)
-        return gradient
-    
-    def log_density_vjp(ans, x):
-        return lambda g: ensure_2d(g) * vectorize_if_needed(log_gradient, x)
-    defvjp(log_density, log_density_vjp)
-    return log_density
 
+# class StanModel(Model):
+#     """Class that encapsulates a PyStan model."""
+#
+#     def __init__(self, fit):
+#         """
+#         Parameters
+#         ----------
+#         fit : `StanFit4model` object
+#         """
+#         self._fit = fit
+#
+#         super().__init__(_make_stan_log_density(fit))
+#
+#     def constrain(self, model_param):
+#
+#         return self._fit.constrain_pars(model_param)
 
+class SubModel(Model):
+    seed = 42
+    rng = random.PRNGKey(seed)
 
-class StanModel(Model):
-    """Class that encapsulates a PyStan model."""
+    def __init__(self, log_prior, log_likelihood, dataset, subsample_size, new_seed=42):
+        if not new_seed == SubModel.seed:
+            SubModel.seed = new_seed
+            SubModel.rng = random.PRNGKey(SubModel.seed)
 
-    def __init__(self, fit):
-        """
-        Parameters
-        ----------
-        fit : `StanFit4model` object
-        """
-        self._fit = fit
-        
-        super().__init__(_make_stan_log_density(fit))
+        def posterior_func(x):
+            return SubModel.posterior(x, log_prior, log_likelihood, dataset, subsample_size)
 
-    def constrain(self, model_param):
-        return self._fit.param_constrain(model_param)
-    
-    
-    def hessian(self, param):
-        return self._fit.log_density_hessian(param)[2]
+        super().__init__(posterior_func)
+
+    @staticmethod
+    def posterior(x, prior, model, dataset, subsample_size):
+        SubModel.rng, sub_rng = random.split(SubModel.rng)
+        subsample_indices = random.choice(sub_rng, dataset.shape[0], shape=[subsample_size], replace=False)
+        subsample_data = dataset[subsample_indices]
+
+        likelihood = (jnp.shape(dataset)[0] / subsample_size) * model(x[jnp.newaxis, :], subsample_data)
+
+        return likelihood + prior(x)
