@@ -115,31 +115,6 @@ class Model(object):
 #
 #         return self._fit.constrain_pars(model_param)
 
-class SubModel(Model):
-    seed = 42
-    rng = random.PRNGKey(seed)
-
-    def __init__(self, log_prior, log_likelihood, dataset, subsample_size, new_seed=42):
-        if not new_seed == SubModel.seed:
-            SubModel.seed = new_seed
-            SubModel.rng = random.PRNGKey(SubModel.seed)
-
-        def posterior_func(x):
-            return SubModel.posterior(x, log_prior, log_likelihood, dataset, subsample_size)
-
-        super().__init__(posterior_func)
-
-    @staticmethod
-    def posterior(x, prior, model, dataset, subsample_size):
-        SubModel.rng, sub_rng = random.split(SubModel.rng)
-        subsample_indices = random.choice(sub_rng, dataset.shape[0], shape=[subsample_size], replace=False)
-        subsample_data = dataset[subsample_indices]
-        # print(subsample_data.shape) #10,4
-
-        likelihood = (jnp.shape(dataset)[0] / subsample_size) * jnp.sum(model(x, subsample_data), axis=-1)
-
-        return likelihood + prior(x)
-
 
 class SubsamplingModel(Model):
     def __init__(self, log_prior, log_likelihood, dataset, subsample_size, seed=42):
