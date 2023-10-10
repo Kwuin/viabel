@@ -144,7 +144,7 @@ class SubModel(Model):
 class SubsamplingModel(Model):
     def __init__(self, log_prior, log_likelihood, dataset, subsample_size, seed=42):
         self.seed = seed
-        self.rng = random.PRNGKey(SubModel.seed)
+        self.rng = random.PRNGKey(self.seed)
         self.log_prior = log_prior
         self.log_likelihood = log_likelihood
         self.dataset = dataset
