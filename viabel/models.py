@@ -7,7 +7,7 @@ from jax import grad, jit, random
 
 __all__ = [
     'Model',
-    'SubModel'
+    'SubsamplingModel'
 ]
 
 
@@ -81,7 +81,6 @@ class Model(object):
         raise NotImplementedError()
 
 
-
 #
 # def _make_stan_log_density(fitobj):
 #     @primitive
@@ -131,14 +130,31 @@ class SubModel(Model):
         super().__init__(posterior_func)
 
     @staticmethod
-    def posterior(x, prior, model,  dataset, subsample_size):
+    def posterior(x, prior, model, dataset, subsample_size):
         SubModel.rng, sub_rng = random.split(SubModel.rng)
         subsample_indices = random.choice(sub_rng, dataset.shape[0], shape=[subsample_size], replace=False)
         subsample_data = dataset[subsample_indices]
-       # print(subsample_data.shape) #10,4
+        # print(subsample_data.shape) #10,4
 
         likelihood = (jnp.shape(dataset)[0] / subsample_size) * jnp.sum(model(x, subsample_data), axis=-1)
 
         return likelihood + prior(x)
 
 
+class SubsamplingModel(Model):
+    def __init__(self, log_prior, log_likelihood, dataset, subsample_size, seed=42):
+        self.seed = seed
+        self.rng = random.PRNGKey(SubModel.seed)
+
+        def posterior_func(x):
+            return self.posterior(x, log_prior, log_likelihood, dataset, subsample_size)
+        super().__init__(posterior_func)
+
+    def posterior(self, x, prior, model, dataset, subsample_size):
+        self.rng, sub_rng = random.split(self.rng)
+        subsample_indices = random.choice(sub_rng, dataset.shape[0], shape=[subsample_size], replace=False)
+        subsample_data = dataset[subsample_indices]
+        # print(subsample_data.shape) #10,4
+        likelihood = (jnp.shape(dataset)[0] / subsample_size) * jnp.sum(model(x, subsample_data), axis=-1)
+
+        return likelihood + prior(x)
