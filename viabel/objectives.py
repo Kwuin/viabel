@@ -1,9 +1,13 @@
 from abc import ABC, abstractmethod
 
-import autograd.numpy as np
-import autograd.numpy.random as npr
-from autograd import value_and_grad, vector_jacobian_product, make_hvp, elementwise_grad, grad, hessian
-from autograd.core import getval
+# import autograd.numpy as np
+# import autograd.numpy.random as npr
+# from autograd import value_and_grad, vector_jacobian_product, make_hvp, elementwise_grad, grad, hessian
+# from autograd.core import getval
+import jax.numpy as np
+import jax.random as npr
+from jax import grad
+
 
 __all__ = [
     'VariationalObjective',
@@ -164,6 +168,7 @@ class ExclusiveKL(StochasticVariationalObjective):
                 else:
                     lower_bound = np.mean(self.model(samples) - approx.log_density(samples))
                 return -lower_bound
+
             self._objective_and_grad = value_and_grad(variational_objective)
             #self._hvp = make_hvp(variational_objective)
 # =============================================================================

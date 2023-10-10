@@ -135,8 +135,10 @@ class SubModel(Model):
         SubModel.rng, sub_rng = random.split(SubModel.rng)
         subsample_indices = random.choice(sub_rng, dataset.shape[0], shape=[subsample_size], replace=False)
         subsample_data = dataset[subsample_indices]
+       # print(subsample_data.shape) #10,4
 
-        likelihood = (jnp.shape(dataset)[0] / subsample_size) * model(x[jnp.newaxis, :], subsample_data)
+        likelihood = (jnp.shape(dataset)[0] / subsample_size) * jnp.sum(model(x, subsample_data), axis=-1)
 
         return likelihood + prior(x)
+
 
