@@ -2,6 +2,8 @@ import jax
 import numpy as np
 
 from ._utils import ensure_2d, vectorize_if_needed
+from jax import random
+import jax.numpy as jnp
 
 __all__ = [
     'Model',
@@ -112,3 +114,27 @@ class StanModel(Model):
     def constrain(self, model_param):
         return self._fit.param_constrain(model_param)
         return self._fit.constrain_pars(model_param)
+    
+    
+
+class SubsamplingModel(Model):
+    def __init__(self, log_prior, log_likelihood, dataset, subsample_size, seed=42):
+        self.seed = seed
+        self.rng = random.PRNGKey(self.seed)
+        self.log_prior = log_prior
+        self.log_likelihood = log_likelihood
+        self.dataset = dataset
+        self.subsample_size = subsample_size
+
+        super().__init__(self.posterior)
+
+    def posterior(self, x):
+        self.rng, sub_rng = random.split(self.rng)
+        subsample_indices = random.choice(sub_rng, self.dataset.shape[0], shape=[self.subsample_size], replace=False)
+        subsample_data = self.dataset[subsample_indices]
+        # print(subsample_data.shape) #10,4
+        likelihood = (jnp.shape(self.dataset)[0] / self.subsample_size) * jnp.sum(
+            self.log_likelihood(x, subsample_data), axis=-1)
+
+        return likelihood + self.log_prior(x)
+

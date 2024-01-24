@@ -1,9 +1,10 @@
 from viabel._psis import psislw
 from viabel.approximations import MFGaussian
 from viabel.diagnostics import all_diagnostics
-from viabel.models import Model, StanModel
+from viabel.models import Model, StanModel, SubsamplingModel
 from viabel.objectives import ExclusiveKL
 from viabel.optimization import RAABBVI, FASO, RMSProp, AveragedRMSProp
+
 
 all = [
     'bbvi',
@@ -177,3 +178,24 @@ def samples_and_log_weights(var_param, model, approx, n_samples):
     samples = approx.sample(var_param, n_samples)
     log_weights = model(samples) - approx.log_density(var_param, samples)
     return samples, log_weights
+
+
+
+
+def newbbvi(dimension, *, n_iters=10000, num_mc_samples=10, log_prior=None,
+               log_likelihood=None, subsample_size=1, dataset=None, learning_rate=0.01,
+               RMS_kwargs=dict(), FASO_kwargs=dict(), RAABBVI_kwargs=dict()):
+    model = SubsamplingModel(log_prior, log_likelihood, dataset, subsample_size)
+
+    approx = MFGaussian(dimension)
+    objective = ExclusiveKL(approx, model, num_mc_samples)
+
+    init_var_param = approx.init_param()
+    base_opt = RMSProp(learning_rate, diagnostics=True, **RMS_kwargs)
+
+    opt = FASO(base_opt, **FASO_kwargs)
+
+    opt_results = opt.optimize(n_iters, objective, init_var_param)
+    opt_results['objective'] = objective
+    return opt_results
+
